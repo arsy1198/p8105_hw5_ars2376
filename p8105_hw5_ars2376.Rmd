@@ -50,7 +50,7 @@ bday_results =
   )
 ```
 
-Plot that shows probability as a function of group size
+Plot showing probability as a function of group size
 
 ```{r}
 bday_results |> 
@@ -90,3 +90,60 @@ power_results =
   group_by(mu) |> 
   summarize(power = mean(p.value < 0.5))
 ```
+
+Plot showing proportion of times the null was rejected
+
+```{r}
+power_results |> ggplot(aes(mu, power)) +
+  geom_point() +
+  geom_line() +
+  labs(
+    title = "Power of One-Sample T-Test vs. True Mean Value",
+    x = "True mean",
+    y = "Power of the test"
+  )
+```
+
+Plot showing average estimate mean vs true mean
+
+```{r}
+mu_est =
+  sim_results |> 
+  group_by(mu) |> 
+  summarize(mean_est = mean(estimate))
+```
+
+```{r}
+mu_est |> 
+  ggplot(aes(mu, mean_est)) +
+  geom_point() +
+  geom_line() +
+  labs(
+    title = "Average Estimate vs. True Mean Value",
+    x = "True mean",
+    y = "Average estiamte"
+  )
+```
+
+Plot showing average estimate of samples where null was rejected vs true mean
+
+```{r}
+mu_est_sig =
+  sim_results |> 
+  filter(p.value < .05) |> 
+  group_by(mu) |> 
+  summarise(mu_est_sig = mean(estimate))
+```
+
+```{r}
+mu_est_sig |> 
+  ggplot(aes(mu, mu_est_sig)) +
+  geom_point() +
+  geom_line() +
+  labs(
+    title = "Average Estimate For Significant Results vs. True Mean Value",
+    x = "True mean",
+    y = "Average estimate (significant)"
+  )
+```
+
