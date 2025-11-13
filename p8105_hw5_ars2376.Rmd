@@ -149,3 +149,17 @@ mu_est_sig |>
 ```
 
 The sample average estimate across tests for which the null is rejected does not equal the true mean. This is due to selection bias. While the first plot depicting the overall average estimate matches the true mean, the second plot depicting the average estimate among significant results is biased upwards for small true effects.
+
+## Problem 3
+
+```{r}
+homicides_df = 
+  read_csv("homicide-data.csv")
+```
+
+The created `homicides_df` has `r ncol(homicides_df)` variables with key variables being`reported_date` or the date of the homicide, the victim's  `first_name` and `last_name`, `victim_race`, `victim_age`, `victim_sex`, `city`, `state`, `lat` and `long` of the homicide, and `disposition` of the case. There are `r nrow(homicides_df)` observations
+
+```{r}
+homicides_df = homicides_df |> 
+  mutate(city_state = paste(city, state, sep = ", "))
+```
