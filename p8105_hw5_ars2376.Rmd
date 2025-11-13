@@ -103,6 +103,7 @@ power_results |> ggplot(aes(mu, power)) +
     y = "Power of the test"
   )
 ```
+As the effect size, or true mean, increases, the statistical power significantly increases. When the effect size reaches 3, the power approaches 1. This shows that as effect size increases, the ability to correctly detect a true effect increases as well, especially among bigger effects.
 
 Plot showing average estimate mean vs true mean
 
@@ -147,3 +148,4 @@ mu_est_sig |>
   )
 ```
 
+The sample average estimate across tests for which the null is rejected does not equal the true mean. This is due to selection bias. While the first plot depicting the overall average estimate matches the true mean, the second plot depicting the average estimate among significant results is biased upwards for small true effects.
