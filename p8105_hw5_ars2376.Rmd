@@ -64,3 +64,29 @@ bday_results |>
   )
 ```
 
+As shown by the plot, the probability of at least two people sharing a birthday increases as the group size increases. When n = 23, the probability of at least two people sharing a birthday  passes 50%.
+
+## Problem 2
+
+```{r}
+sim_results =
+  expand_grid(
+    mu = 0:6,
+    iter = 1:5000) |> 
+  mutate(
+    data = map(mu, ~rnorm(30, mean = .x, sd = 5)),
+    test_result = map(data, ~t.test(.x, mu = 0)),
+    tidy_result = map(test_result, broom::tidy)
+  ) |> 
+  unnest(tidy_result) |> 
+  select(mu, estimate, p.value)
+```
+
+Getting power results
+
+```{r}
+power_results =
+  sim_results |> 
+  group_by(mu) |> 
+  summarize(power = mean(p.value < 0.5))
+```
