@@ -1,6 +1,6 @@
 ---
 title: "p8105_hw5_ars2376"
-output: html_document
+output: github_document
 date: "2025-11-12"
 ---
 
@@ -13,7 +13,6 @@ library(tidyverse)
 library(rvest)
 library(ggplot2)
 ```
-
 
 ## Problem 1
 
@@ -133,7 +132,7 @@ mu_est_sig =
   sim_results |> 
   filter(p.value < .05) |> 
   group_by(mu) |> 
-  summarise(mu_est_sig = mean(estimate))
+  summarize(mu_est_sig = mean(estimate))
 ```
 
 ```{r}
@@ -157,9 +156,54 @@ homicides_df =
   read_csv("homicide-data.csv")
 ```
 
-The created `homicides_df` has `r ncol(homicides_df)` variables with key variables being`reported_date` or the date of the homicide, the victim's  `first_name` and `last_name`, `victim_race`, `victim_age`, `victim_sex`, `city`, `state`, `lat` and `long` of the homicide, and `disposition` of the case. There are `r nrow(homicides_df)` observations
+The created `homicides_df` has `r ncol(homicides_df)` variables with key variables being`reported_date` or the date of the homicide, the victim's  `first_name` and `last_name`, `victim_race`, `victim_age`, `victim_sex`, `city`, `state`, `lat` and `long` of the homicide, and `disposition` of the case. There are `r nrow(homicides_df)` observations in the dataset.
 
 ```{r}
 homicides_df = homicides_df |> 
   mutate(city_state = paste(city, state, sep = ", "))
 ```
+
+Summarize within cities the total number of homicides and unsolved homicides
+
+```{r}
+total_homicides = homicides_df |> 
+  group_by(city_state) |> 
+  summarize(
+    total = n()
+  )
+
+knitr::kable(total_homicides, col.names = c("City, State", "Total Homicides"))
+```
+
+```{r}
+unsolved = homicides_df |>
+  group_by(city_state) |> 
+  mutate(
+    unsolved = disposition %in% c("Closed without arrest", "Open/No arrest") 
+  ) |> 
+  summarize(
+    unsolved = sum(unsolved),
+    .groups = "drop"
+  )
+
+knitr::kable(unsolved, col.names = c("City, State", "Total Unsolved Homicides"))
+```
+
+Proportion of unsolved homicides in Baltimore, MD
+
+```{r}
+baltimore_prop = homicides_df |> 
+  filter(city_state == "Baltimore, MD") |> 
+  summarize(
+    unsolved = sum(disposition %in% c("Closed without arrest", "Open/No arrest")), 
+     total = n()
+  ) |> 
+  (\(x) prop.test(x = x$unsolved, n = x$total))() |>
+  broom::tidy()
+
+baltimore_pull = baltimore_prop |> 
+  select(estimate, conf.low, conf.high)
+
+baltimore_pull
+```
+
