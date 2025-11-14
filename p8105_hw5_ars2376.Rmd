@@ -8,7 +8,7 @@ date: "2025-11-12"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, results = 'hide'}
+```{r, message = FALSE}
 library(tidyverse)
 library(rvest)
 library(ggplot2)
@@ -205,5 +205,44 @@ baltimore_pull = baltimore_prop |>
   select(estimate, conf.low, conf.high)
 
 baltimore_pull
+```
+
+Proportion of unsolved cities in each city
+
+```{r, warning = FALSE}
+all_prop = homicides_df |> 
+  mutate(
+    unsolved = disposition %in% c("Closed without arrest", "Open/No arrest")
+  ) |> 
+  group_by(city_state) |> 
+  summarize(
+    unsolved = sum(unsolved),
+    total = n(),
+    .groups = "drop"
+  ) |> 
+  mutate(
+    test = map2(unsolved, total, ~prop.test(.x, .y)),
+    test_tidy = map(test, broom::tidy)
+  ) |> 
+  unnest(test_tidy) |> 
+  select(city_state, estimate, conf.low, conf.high
+  )
+
+all_prop
+```
+
+Plot showing estimates and CIs for each city
+
+```{r}
+all_prop |> 
+  mutate(city_state = fct_reorder(city_state, estimate)) |> 
+  ggplot(aes(x = city_state, y = estimate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) + coord_flip() +
+  labs(
+    title = "Proportion of Unsolved Homicides by City",
+    x = "City, State",
+    y = "Proportion of Unsolved Homicides by City"
+  )
 ```
 
