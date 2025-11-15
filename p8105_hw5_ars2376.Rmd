@@ -87,7 +87,7 @@ Getting power results
 power_results =
   sim_results |> 
   group_by(mu) |> 
-  summarize(power = mean(p.value < 0.5))
+  summarize(power = mean(p.value < 0.05))
 ```
 
 Plot showing proportion of times the null was rejected
@@ -102,7 +102,7 @@ power_results |> ggplot(aes(mu, power)) +
     y = "Power of the test"
   )
 ```
-As the effect size, or true mean, increases, the statistical power significantly increases. When the effect size reaches 3, the power approaches 1. This shows that as effect size increases, the ability to correctly detect a true effect increases as well, especially among bigger effects.
+As the effect size, or true mean, increases, the statistical power significantly increases. When the effect size reaches 4, the power approaches 1. This shows that as effect size increases, the ability to correctly detect a true effect increases as well, especially among bigger effects.
 
 Plot showing average estimate mean vs true mean
 
