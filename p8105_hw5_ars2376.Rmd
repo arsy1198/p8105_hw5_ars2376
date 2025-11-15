@@ -63,7 +63,7 @@ bday_results |>
   )
 ```
 
-As shown by the plot, the probability of at least two people sharing a birthday increases as the group size increases. When n = 23, the probability of at least two people sharing a birthday  passes 50%.
+As shown by the plot, the probability of at least two people sharing a birthday increases as the group size increases. When n = 23, the probability of at least two people sharing a birthday passes 50%.
 
 ## Problem 2
 
